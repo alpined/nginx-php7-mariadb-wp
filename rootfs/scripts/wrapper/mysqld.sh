@@ -12,16 +12,16 @@ else
 
     chown -R mysql:mysql /var/lib/mysql
 
-    mysql_install_db --user=mysql --datadir='/var/lib/mysql' --force > /dev/null
+    mysql_install_db --user=mysql --datadir='/var/lib/mysql' --skip-test-db --force > /dev/null
 
     if [ "$MYSQL_ROOT_PASSWORD" = "" ]; then
         MYSQL_ROOT_PASSWORD=$(pwgen 16 1)
         echo "[INFO] MySQL root Password: $MYSQL_ROOT_PASSWORD"
     fi
 
-cat <<- EOF > ~/.my.cnf
-    [client]
-    password="$MYSQL_ROOT_PASSWORD"
+cat << EOF > ~/.my.cnf
+[client]
+password="$MYSQL_ROOT_PASSWORD"
 EOF
 
     MYSQL_DATABASE=${MYSQL_DATABASE:-""}
@@ -33,10 +33,9 @@ EOF
         return 1
     fi
 
-cat <<- EOF > $tfile
-        DROP DATABASE test;
-        SET PASSWORD = PASSWORD("$MYSQL_ROOT_PASSWORD");
-        FLUSH PRIVILEGES;
+cat << EOF > $tfile
+SET PASSWORD = PASSWORD("$MYSQL_ROOT_PASSWORD");
+FLUSH PRIVILEGES;
 EOF
 
     if [ "$MYSQL_DATABASE" != "" ]; then
@@ -49,8 +48,7 @@ EOF
         fi
     fi
 
-    /usr/bin/mysqld --user=mysql --datadir='/var/lib/mysql' --bootstrap --verbose=0 < $tfile
-    rm -f $tfile
+    { echo '[INFO] Starting bootstrap !!!'; sleep 5; /usr/bin/mysql < $tfile; rm -f $tfile; echo '[INFO] Completed bootstrap !!!'; } &
     
 fi
 
