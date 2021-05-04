@@ -34,15 +34,9 @@ EOF
     fi
 
 cat <<- EOF > $tfile
-        USE mysql;
-        DELETE FROM user WHERE user = 'root' AND host NOT IN ('localhost', '127.0.0.1', '::1');
-        FLUSH PRIVILEGES;
-        GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' WITH GRANT OPTION;
-        GRANT ALL PRIVILEGES ON *.* TO 'root'@'127.0.0.1' WITH GRANT OPTION;
-        GRANT ALL PRIVILEGES ON *.* TO 'root'@'::1' WITH GRANT OPTION;
-        UPDATE user SET password=PASSWORD("$MYSQL_ROOT_PASSWORD") WHERE user='root';
-        FLUSH PRIVILEGES;
         DROP DATABASE test;
+        SET PASSWORD = PASSWORD("$MYSQL_ROOT_PASSWORD");
+        FLUSH PRIVILEGES;
 EOF
 
     if [ "$MYSQL_DATABASE" != "" ]; then
@@ -57,6 +51,7 @@ EOF
 
     /usr/bin/mysqld --user=mysql --datadir='/var/lib/mysql' --bootstrap --verbose=0 < $tfile
     rm -f $tfile
+    
 fi
 
 exec /usr/bin/mysqld --user=mysql --datadir='/var/lib/mysql' --skip_networking=0 --console
