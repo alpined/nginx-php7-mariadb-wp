@@ -5,6 +5,7 @@ apk add --no-cache nginx \
   php7-mysqli php7-sqlite3 php7-pdo php7-pdo_mysql php7-pdo_sqlite \
   php7-xmlrpc php7-xml php7-xmlreader php7-json php7-curl \
   php7-gd php7-exif php7-zlib php7-zip php7-mcrypt \
+  php7-pecl-imagick php7-fileinfo \
   php7-ldap php7-pspell php7-iconv php7-opcache
 
 # setup proper runtime
