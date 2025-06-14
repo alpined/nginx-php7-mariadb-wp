@@ -10,3 +10,5 @@ do
 		mv ${ff} ${ff}-executed
 	fi
 done
+
+rm -fr /tmp/*
